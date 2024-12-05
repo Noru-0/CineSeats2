@@ -1,0 +1,127 @@
+<section>
+
+    <div class="bgc">
+        <div class="container container_contact p-5">
+            <h1 class="text-center mb-3"><b>Contact Us</b></h1>
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>Get in Touch</h2>
+                    <form id="contactForm">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input
+                                    type="text"
+                                    class="form-control"
+                                    id="name"
+                                    placeholder="Your Name"
+                                    required
+                            />
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input
+                                    type="email"
+                                    class="form-control"
+                                    id="email"
+                                    placeholder="Your Email"
+                                    required
+                            />
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message</label>
+                            <textarea
+                                    class="form-control"
+                                    id="message"
+                                    rows="5"
+                                    placeholder="Your Message"
+                            ></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-submit">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-5">
+                    <h2>Contact Information</h2>
+                    <div class="contact-info">
+                        <a
+                                class="btn btn-outline-primary"
+                                href="mailto:support@CineSeats.com"
+                        >
+                            <i class="fas fa-envelope"></i>
+                            support@CineSeats.com
+                        </a>
+                        <br/>
+                        <div class="btn btn-outline-secondary">
+                            <i class="fas fa-phone"></i> +84 9876543210
+                        </div>
+                        <br/>
+                        <a
+                                href="https://www.google.com/maps/place/227 Đ.
+              Nguyễn Văn Cừ, Phường 4, Quận 5, Hồ Chí Minh"
+                                target="_blank"
+                        >
+                            <div class="btn btn-outline-secondary">
+                                <i class="fa-sharp fa-solid fa-map-location-dot"></i>
+                                227 Đ. Nguyễn Văn Cừ, Phường 4, Quận 5, Hồ Chí Minh
+                            </div>
+                        </a
+                        >
+
+                        <h4>Social Media:</h4>
+                        <a
+                                class="btn btn-outline-primary"
+                                href="https://www.facebook.com/hello.minh.la.quangkhai"
+                                target="_blank"
+                        >
+                            <i class="fab fa-facebook"></i> Facebook
+                        </a>
+                        <br/>
+                        <a
+                                class="btn btn-outline-dark"
+                                href="https://github.com/TBKiet/GA03"
+                                target="_blank"
+                        >
+                            <i class="fab fa-github"></i> GitHub
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            document
+                    .getElementById("contactForm")
+                    .addEventListener("submit", function (event) {
+                        event.preventDefault();
+                        const message = document.getElementById("message").value.trim();
+                        if (message === "") {
+                            showToast("Please fill in Message field.", "danger");
+                            return;
+                        }
+                        showToast("Message sent successfully!", "success");
+                        document.getElementById("contactForm").reset();
+                    });
+        </script>
+        <div
+                class="toast align-items-center border-0"
+                id="formToast"
+                role="alert"
+                aria-live="assertive"
+                aria-atomic="true"
+        >
+            <div class="d-flex">
+                <div class="toast-body text-white" id="toastMessage">
+                    Your message will appear here.
+                </div>
+                <button
+                        type="button"
+                        class="btn-close btn-close-white me-2 m-auto"
+                        data-bs-dismiss="toast"
+                        aria-label="Close"
+                ></button>
+            </div>
+        </div>
+    </div>
+
+</section>

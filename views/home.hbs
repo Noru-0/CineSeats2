@@ -1,0 +1,76 @@
+<section>
+    <!-- promotional slider -->
+    <div class="container">
+        <div class="slider-container promo-slider">
+            <button class="slider-btn prev" onclick="moveSlide('promo',-1)">❮</button>
+            <div class="slider">
+                {{#each promotions}}
+                    <div class="promo-slide">
+                        <a href="{{this.href}}">
+                            <img src="{{this.image_url}}" alt="{{this.title}}" class="img-fluid">
+                        </a>
+                    </div>
+                {{/each}}
+            </div>
+            <button class="slider-btn next" onclick="moveSlide('promo',1)">❯</button>
+        </div>
+    </div>
+
+    <div class="container mb-3">
+        <h1 class="showing-line">Now Showing</h1>
+        <!-- Home cards 1 -->
+        <div class="slider-container showing-slider">
+            <button class="slider-btn prev" onclick="moveSlide('showing', -4)">❮</button>
+            <div class="slider">
+                {{#each showingMovies}}
+                    <div class="movie-slide col-6 col-sm-6 col-xl-3" id="mv-img">
+                        <div class="brief-des">
+                            <a href="/movies/{{this.id}}">
+                                <img src="{{this.image}}" alt="{{this.name_vn}}" class="img-fluid">
+                            </a>
+                            <div class="rating">
+                                {{#if this.ratings}}
+                                    <i class="fa-solid fa-star"></i>
+                                    <p>{{this.ratings}}</p>
+                                {{/if}}
+                            </div>
+                            <div class="age-limit">{{this.limitage_vn}}</div>
+                        </div>
+                        <p class="mv-name">{{this.name_vn}}</p>
+                    </div>
+                {{/each}}
+            </div>
+            <button class="slider-btn next" onclick="moveSlide('showing', 4)">❯</button>
+        </div>
+
+        <a class="add-btn btn--outline --wf --mw --m-mid" href="/movies/showing">See more</a>
+
+        <h1 class="showing-line">Upcoming</h1>
+        <!-- Home cards 2 -->
+        <div class="slider-container upcoming-slider">
+            <button class="slider-btn prev" onclick="moveSlide('upcoming', -4)">❮</button>
+            <div class="slider">
+                {{#each upcomingMovies}}
+                    <div class="movie-slide col-6 col-sm-6 col-xl-3" id="mv-img">
+                        <div class="brief-des">
+                            <a href="/movies/{{this.id}}">
+                                <img src="{{this.image}}" alt="{{this.name_vn}}" class="img-fluid">
+                            </a>
+                            <div class="rating">
+                                {{#if this.ratings}}
+                                    <i class="fa-solid fa-star"></i>
+                                    <p>{{this.ratings}}</p>
+                                {{/if}}
+                            </div>
+                            <div class="age-limit">{{this.limitage_vn}}</div>
+                        </div>
+                        <p class="mv-name">{{this.name_vn}}</p>
+                    </div>
+                {{/each}}
+            </div>
+            <button class="slider-btn next" onclick="moveSlide('upcoming', 4)">❯</button>
+        </div>
+        <a class="add-btn btn--outline --wf --mw --m-mid" href="/movies/upcoming">See more</a>
+
+    </div>
+</section>
