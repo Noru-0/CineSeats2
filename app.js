@@ -14,6 +14,7 @@ const userRouter = require("./components/auth/auth.routes");
 const profileRouter = require("./components/profile/profile.routes");
 const apiRouter = require("./components/api/api.routes");
 const adminRouter = require('./components/admin/admin.routes');
+const accountRouter = require('./components/account/account.routes');
 
 const app = express();
 const PORT = 3000;
@@ -92,6 +93,7 @@ app.get("/contact", (req, res) => {
 });
 
 app.use('/admin', adminRouter);
+app.use('/account', accountRouter);
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
