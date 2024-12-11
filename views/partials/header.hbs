@@ -43,7 +43,7 @@
             // Event listener for when the user presses "Enter" or clicks the search button
             searchField.addEventListener('keypress', function (event) {
                 if (event.key === 'Enter') {
-                    if(searchField.value.trim() !== '') {
+                    if (searchField.value.trim() !== '') {
                         handleSearch();
                     }
                 }
@@ -84,7 +84,7 @@
             }
         </script>
         {{#if isAuthenticated}}
-        <a href="/logout"><button class="nav-button" type="submit">Log Out</button></a>
+        <a href="/account/general"><button class="nav-button" type="submit">Profile</button></a>
         {{else}}
         <a href="/login"><button class="nav-button" type="submit">Sign In</button></a>
         {{/if}}

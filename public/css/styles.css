@@ -992,6 +992,28 @@ ul {
   overflow-y: auto; /* Add vertical scrollbar if content exceeds */
 }
 
+.event-item {
+  background-color: #ffffff;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+.voucher-item img,
+.event-item img {
+  width: 100px;
+  height: auto;
+  margin-right: 10px;
+}
+.events-section h3 {
+  text-align: center;
+}
+.scrollable {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
 @media (max-width: 768px) {
   aside {
     width: 70px !important;

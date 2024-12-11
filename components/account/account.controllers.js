@@ -1,3 +1,5 @@
+const { getUserData } = require('./account.model');
+
 const renderGeneral = async (req, res) => {
     try {
         res.render("account/general");
@@ -43,6 +45,15 @@ const renderHistory = async (req, res) => {
     }
 }
 
+const getAccountInfo = async (req, res) => {
+    try {
+        const userData = await getUserData();
+        res.render('general', { user: userData });
+    } catch (error) {
+        res.status(500).send('Error fetching user data');
+    }
+};
+
 module.exports = {
-    renderGeneral, renderMembership, renderVoucher, renderSetting, renderHistory
+    renderGeneral, renderMembership, renderVoucher, renderSetting, renderHistory, getAccountInfo
 }
