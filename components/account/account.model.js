@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const userDBConnection = require('../../config/userDBConnection');
 const { faker } = require('@faker-js/faker');
+const { v4: uuidv4 } = require('uuid');
 
 const userSchema = new mongoose.Schema({
     // Profile
@@ -26,6 +27,10 @@ const userSchema = new mongoose.Schema({
     role: {
         type: String,
         default: 'user'
+    },
+    status: {
+        type: String,
+        default: 'active'
     }
 });
 
@@ -71,6 +76,8 @@ const createRandomUserData = () => {
             { code: faker.string.uuid(), discount: faker.number.int({ min: 5, max: 50 }) },
             { code: faker.string.uuid(), discount: faker.number.int({ min: 5, max: 50 }) },
         ],
+        role: faker.helpers.arrayElement(['user', 'admin']),
+        status: faker.helpers.arrayElement(['active', 'blocked']),
     };
 };
 
@@ -80,6 +87,7 @@ const insertRandomData = async (count = 10) => {
         const users = Array.from({ length: count }, createRandomUserData); // Generate `count` users
         await User.insertMany(users);
         console.log(`${count} random users inserted successfully!`);
+        console.log('Sample user data:', users[0]);
     } catch (error) {
         console.error('Error inserting random data:', error);
     }
