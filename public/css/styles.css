@@ -973,3 +973,57 @@ ul {
   background-color: #dc3545;
   color: white;
 }
+
+/* account */
+.nav-pills .nav-link {
+  background-color: #6c757d; /* Màu xám */
+  color: white;
+}
+.nav-pills .nav-link.active {
+  background-color: #28a745; /* Màu xanh lá */
+}
+.nav-pills .nav-link.disabled {
+  background-color: #ced4da; /* Màu xám nhạt */
+  color: #6c757d;
+}
+
+.fixed-size {
+  max-height: 400px; /* Set the desired fixed height */
+  overflow-y: auto; /* Add vertical scrollbar if content exceeds */
+}
+
+.event-item {
+  background-color: #ffffff;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+.voucher-item img,
+.event-item img {
+  width: 100px;
+  height: auto;
+  margin-right: 10px;
+}
+.events-section h3 {
+  text-align: center;
+}
+.scrollable {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  aside {
+    width: 70px !important;
+    height: 100vh;
+  }
+  aside .d-flex.align-items-center span {
+    display: none; /* Ẩn text */
+  }
+  aside ul li a {
+    justify-content: center;
+    text-align: center;
+  }
+}
