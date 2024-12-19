@@ -1,60 +1,48 @@
 <section>
     <div class="d-flex">
         {{> sidebar}}
-        <div class="content col-md-10">
-            <h2>Account Management</h2>
-            <p>Hi. Welcome back to CineSeats Admin!</p>
-            <div class="table-container">
-                <div class="d-flex justify-content-between mb-3">
-                    <div class="d-flex">
-                        <input type="text" class="form-control me-2" placeholder="search...">
-                        <select class="form-select me-2">
-                            <option selected>Customer</option>
-                            <option value="1">Admin</option>
-                            <option value="2">Manager</option>
+        <div class="content  col-md-10">
+            <div class="content ">
+                <h1>Account Management</h1>
+                <p> Hi. Welcome back to CineSeats Admin!</p>
+
+                <div class="container-admin ">
+                    <div class="filter-options ">
+                        <input type="search" placeholder="search name..." class="filter " id="search">
+
+                        <label for="role">Role:</label>
+                        <select id="role" class="filter">
+                            <option value="all">All</option>
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                            <option value="employee">Employee</option>
                         </select>
-                        <input type="text" class="form-control me-2" placeholder="Enter your message here">
-                    </div>
-                    <div class="d-flex">
-                        <select class="form-select me-2">
-                            <option selected>Date of registration</option>
-                            <option value="1">Name</option>
-                            <option value="2">Role</option>
+
+                        <label for="sort">Sort by:</label>
+                        <select id="sort" class="filter" style="width: 200px;">
+                            <option value="none">None</option>
+                            <option value="role">Role</option>
+                            <option value="name">Name</option>
+                            <option value="email">Email</option>
                         </select>
-                        <button class="btn btn-success">Filter</button>
+
+                        <button id="filter"> Filter </button>
                     </div>
-                </div>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Actions</th>
-                            <th>Name</th>
-                            <th>Role</th>
-                            <th>Date</th>
-                            <th>Phone</th>
-                            <th>Email</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <input type="checkbox" class="form-check-input me-2">
-                                <button class="btn btn-edit btn-sm me-2">Edit</button>
-                                <button class="btn btn-delete btn-sm">Delete</button>
-                            </td>
-                            <td>Nguyễn Quang Khải</td>
-                            <td>Customer</td>
-                            <td>25/09/2004</td>
-                            <td>1234567890</td>
-                            <td>ngkhai22@domain.com</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="d-flex justify-content-end">
-                    <button class="btn btn-select-all me-2">Select All</button>
-                    <button class="btn btn-block-user">Block User</button>
+                    <br>
+
+                    <table id="user-db">
+                        <!-- hien trong backend -->
+                    </table>
+
+                    <div class="actions">
+                        <button>Select All</button>
+                        <button class="delete-btn">Block User</button>
+                    </div>
                 </div>
             </div>
+
+            {{!--
+            <script src="./account.js"></script> --}}
         </div>
     </div>
 </section>
