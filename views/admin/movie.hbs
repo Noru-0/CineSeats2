@@ -1,0 +1,41 @@
+<section>
+    <div class="d-flex">
+        {{> sidebar}}
+
+        <div class="content">
+            <h1>Movie Manager</h1>
+            <p> Hi. Welcome back to CineSeats Admin!</p>
+            <div class="container-admin">
+                <div class="filter-options">
+                    <input type="search" placeholder="search name ..." class="filter" id="search">
+
+                    <label for="status">Status:</label>
+                    <select id="status" class="filter">
+                        <option value="all">All</option>
+                        <option value="currently_showing">Currently Showing</option>
+                        <option value="coming_soon">Coming Soon</option>
+                        <option value="ended">Ended</option>
+                    </select>
+
+                    <label for="sort">Sort by:</label>
+                    <select id="sort" class="filter" style="width: 200px;">
+                        <option value="none">None</option>
+                        <option value="name">Name</option>
+                        <option value="time">Time</option>
+                    </select>
+
+                    <button id="filter"> Filter </button>
+                    <button id="add-movie"> Add </button>
+                </div>
+                <br>
+            </div>
+        </div>
+
+        <div id="movies-DB">
+            <!-- trong phai backend thuc hien  -->
+        </div>
+    </div>
+
+    {{!--
+    <script src="./movie.js"></script> --}}
+</section>
