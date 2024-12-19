@@ -95,7 +95,7 @@ app.get("/contact", (req, res) => {
 
 app.use('/admin', adminRouter);
 app.use('/account', accountRouter);
-insertRandomData(10);
+// insertRandomData(10);
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

@@ -15,7 +15,8 @@
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "uuid": "^11.0.3"
   },
   "name": "cineseats",
   "version": "1.0.0",
