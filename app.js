@@ -4,7 +4,7 @@ require('./config/userDBConnection');
 const express = require("express");
 const session = require("express-session");
 const passport = require("passport");
-const {engine} = require("express-handlebars");
+const { engine } = require("express-handlebars");
 const path = require("path");
 const MongoStore = require("connect-mongo");
 const movieRouter = require("./components/movies/movies.routes");
@@ -15,6 +15,7 @@ const profileRouter = require("./components/profile/profile.routes");
 const apiRouter = require("./components/api/api.routes");
 const adminRouter = require('./components/admin/admin.routes');
 const accountRouter = require('./components/account/account.routes');
+const { insertRandomData } = require('./components/account/account.model');
 
 const app = express();
 const PORT = 3000;
@@ -24,7 +25,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Handle register and login form data
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 
 // Set up session middleware with MongoDB store
 app.use(session({
@@ -85,15 +86,16 @@ app.use("/search", searchRouter);
 app.use("/profile", profileRouter);
 app.use("/api", apiRouter);
 app.get("/about", (req, res) => {
-    res.render("about", {layout: "main"});
+    res.render("about", { layout: "main" });
 });
 
 app.get("/contact", (req, res) => {
-    res.render("contact", {layout: "main"});
+    res.render("contact", { layout: "main" });
 });
 
 app.use('/admin', adminRouter);
 app.use('/account', accountRouter);
+insertRandomData(10);
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

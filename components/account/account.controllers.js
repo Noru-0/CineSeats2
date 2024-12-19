@@ -47,12 +47,14 @@ const renderHistory = async (req, res) => {
 
 const getAccountInfo = async (req, res) => {
     try {
-        const userData = await getUserData();
+        const userId = req.user.id;
+        const userData = await getUserData(userId);
         res.render('general', { user: userData });
     } catch (error) {
         res.status(500).send('Error fetching user data');
     }
 };
+
 
 module.exports = {
     renderGeneral, renderMembership, renderVoucher, renderSetting, renderHistory, getAccountInfo
