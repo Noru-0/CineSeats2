@@ -1,5 +1,7 @@
 const { User } = require("../account/account.model");
+const Movie = require("../movies/movies.model");
 
+// Render Pages
 // Render trang quản lý tài khoản
 const renderAccount = async (req, res) => {
     try {
@@ -42,24 +44,27 @@ const renderTheater = async (req, res) => {
 // Render trang movie
 const renderMovie = async (req, res) => {
     try {
-        res.render("admin/movie");
+        // Lấy tất cả phim
+        const movies = await Movie.find();
+        const movieData = movies.map(movie => ({
+            id: movie.id,
+            name: movie.name_vn,
+            genre: movie.type_name_en.join(", "), // Join genres with a comma
+            country: movie.country_name_en,
+            price: movie.price || "N/A", // Default to "N/A" if price is not available
+            totalPurchases: movie.totalPurchases || 0, // Default to 0 if totalPurchase is not available
+            releasedTime: movie.release_date instanceof Date ? movie.release_date.toLocaleDateString() : "Unknown", // Release date
+        }));
+
+        res.render("admin/movie", { movies: movieData });
     } catch (error) {
         console.error("Error loading movie page:", error);
         res.status(500).send("Error loading movie page.");
     }
 };
 
-// Lấy danh sách người dùng
-const getUsers = async (req, res) => {
-    try {
-        const users = await User.find(); // Tìm tất cả người dùng
-        res.json(users); // Trả về danh sách người dùng dưới dạng JSON
-    } catch (error) {
-        console.error("Error fetching users:", error);
-        res.status(500).send("Error fetching users.");
-    }
-};
 
+// Users management
 // Xóa người dùng
 const deleteUser = async (req, res) => {
     try {
@@ -101,7 +106,6 @@ const blockUser = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
-
 
 // Mở cấm người dùng
 const unblockUser = async (req, res) => {
@@ -153,14 +157,86 @@ const getFilteredAndSortedUsers = async (req, res) => {
     }
 };
 
+
+// Movies Management
+// Helper function to get filtered and sorted movies
+const getFilteredAndSortedMovies = async (req, res) => {
+    try {
+        const { name, genre, country, sortBy, sortOrder } = req.query;
+        // Build filter query
+        const filter = {};
+        if (name) filter.name_vn = new RegExp(name, 'i'); // Case-insensitive search
+        if (genre && genre !== "all") filter.type_name_en = genre;
+        if (country && country !== "all") filter.country_name_en = country;
+
+        // Build sort options
+        const sort = {};
+        if (sortBy) {
+            sort[sortBy] = sortOrder === "desc" ? -1 : 1;
+        }
+
+        // Fetch movies from the database
+        const movies = await Movie.find(filter).sort(sort);
+
+        res.status(200).json({ movies });
+    } catch (error) {
+        console.error("Error fetching movies:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+// Create a new movie
+const createMovie = async (req, res) => {
+    try {
+        const newMovie = new Movie(req.body);
+        await newMovie.save();
+        res.status(201).json({ message: 'Movie created successfully.', movie: newMovie });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error creating movie.' });
+    }
+};
+
+// Update a movie
+const updateMovie = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updatedMovie = await Movie.findByIdAndUpdate(id, req.body, { new: true });
+        if (!updatedMovie) return res.status(404).json({ error: 'Movie not found.' });
+        res.status(200).json({ message: 'Movie updated successfully.', movie: updatedMovie });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error updating movie.' });
+    }
+};
+
+// Delete a movie
+const deleteMovie = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deletedMovie = await Movie.findByIdAndDelete(id);
+        if (!deletedMovie) return res.status(404).json({ error: 'Movie not found.' });
+        res.status(200).json({ message: 'Movie deleted successfully.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error deleting movie.' });
+    }
+};
+
 module.exports = {
+    //render
     renderAccount,
     renderDashBoard,
     renderTheater,
     renderMovie,
-    getUsers,
+    //user
     deleteUser,
     blockUser,
     unblockUser,
-    getFilteredAndSortedUsers
+    getFilteredAndSortedUsers,
+    //movie
+    createMovie,
+    updateMovie,
+    deleteMovie,
+    getFilteredAndSortedMovies
 };
