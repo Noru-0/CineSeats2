@@ -4,7 +4,6 @@
 
         <div class="content col-md-10">
             <h1>Movies Manager</h1>
-            <p>Hi. Welcome back to CineSeats Admin!</p>
 
             <div class="container-admin">
                 <!-- Filter Options -->
@@ -62,13 +61,14 @@
                     <table id="movie-db" class="table table-striped">
                         <thead>
                             <tr>
-                                <th style="width: 30%;">Movie Name</th>
-                                <th style="width: 10%;">Genre</th>
-                                <th style="width: 10%;">Country</th>
-                                <th style="width: 8%;">Price</th>
-                                <th style="width: 12%;">Total Purchases</th>
-                                <th style="width: 15%;">Released Time</th>
-                                <th style="width: 15%;">Actions</th>
+                                <th style="width: 25%; position: sticky; top: 0;">Movie Name</th>
+                                <th style="width: 10%; position: sticky; top: 0;">Genre</th>
+                                <th style="width: 10%; position: sticky; top: 0;">Country</th>
+                                <th style="width: 11%; position: sticky; top: 0;">Price</th>
+                                <th style="width: 12%; position: sticky; top: 0;">Total Purchases
+                                </th>
+                                <th style="width: 12%; position: sticky; top: 0;">Released Time</th>
+                                <th style="width: 20%; position: sticky; top: 0;">Actions </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -89,8 +89,11 @@
                         </tbody>
                     </table>
                 </div>
-
-
+                <div>
+                    <div class="d-flex justify-content-end">
+                        <button id="add-movie-button" class="btn btn-success mt-4">Add Movie</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -102,10 +105,8 @@
         const fetchmovies = async (filters = {}) => {
             const params = new URLSearchParams(filters);
             const response = await fetch(`/admin/movies?${params.toString()}`);
-            console.log("response:", response); // Debugging
             if (response.ok) {
                 const { movies } = await response.json();
-                console.log("movies:", movies); // Debugging
                 populatemovieTable(movies);
             } else {
                 console.error("Error fetching movies.");
@@ -144,7 +145,14 @@
             document.querySelectorAll(".edit-btn").forEach((button) => {
                 button.addEventListener("click", async () => {
                     const movieId = button.dataset.id;
-
+                    // Fetch movie details for editing
+                    const response = await fetch(`/admin/movies/${movieId}`, { method: "GET" });
+                    if (response.ok) {
+                        const movie = await response.json();
+                        showEditForm(movie);
+                    } else {
+                        alert("Error fetching movie details.");
+                    }
                 });
             });
 
@@ -191,6 +199,179 @@
             console.log("Sort applied:", filters); // Debugging line
             fetchmovies(filters);
         });
+
+        // Show the edit form with the current movie details
+        const showEditForm = (movie) => {
+            const content = document.querySelector(".content");
+            content.innerHTML = `
+            <div class="content">
+                <h1>Edit Movie: ${movie.name_vn}</h1>
+                <div class="container-admin">
+                    <form id="edit-movie-form" class="form-container-movie-manager">
+                        <div class="form-group-movie-manager">
+                            <label for="name-vn">Name (VN):</label>
+                            <input type="text" id="name-vn" value="${movie.name_vn}">
+                        </div>
+                        <div class="form-group-movie-manager">
+                            <label for="name-en">Name (EN):</label>
+                            <input type="text" id="name-en" value="${movie.name_en}">
+                        </div>
+                        <div class="form-group-movie-manager">
+                            <label for="director">Director:</label>
+                            <input type="text" id="director" value="${movie.director}">
+                        </div>
+                        <div class="form-group-movie-manager">
+                            <label for="actor">Actor:</label>
+                            <input type="text" id="actor" value="${movie.actor}">
+                        </div>
+                        <div class="form-group-movie-manager">
+                            <label for="release-date">Release Date:</label>
+                            <input type="date" id="release-date" value="${new Date(movie.release_date).toISOString().split('T')[0]}">
+                        </div>
+                        <div class="form-group-movie-manager">
+                            <label for="price">Price:</label>
+                            <input type="number" id="price" value="${movie.price}">
+                        </div>
+                        <div class="form-group-movie-manager">
+                            <label for="genre">Genre:</label>
+                            <input type="text" id="genre" value="${movie.type_name_en.join(', ')}">
+                        </div>
+                         <div class="form-group-movie-manager">
+                            <label for="movie-image">Image:</label>
+                            <input type="file" id="movie-image" accept="image/*">
+                            <!-- You can optionally display the current image here if it exists -->
+                            ${movie.image ? `<img src="${movie.image}" alt="Current Image" width="100" height="100">` : ''}
+                        </div>
+                        <div class="form-action-movie-manager">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="button" class="btn btn-secondary" id="cancel-edit">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+
+            // Handle form submission
+            document.getElementById("edit-movie-form").addEventListener("submit", async (event) => {
+                event.preventDefault();
+
+                const updatedMovie = {
+                    name_vn: document.getElementById("name-vn").value,
+                    name_en: document.getElementById("name-en").value,
+                    director: document.getElementById("director").value,
+                    actor: document.getElementById("actor").value,
+                    release_date: new Date(document.getElementById("release-date").value),
+                    price: document.getElementById("price").value,
+                    type_name_en: document.getElementById("genre").value.split(',').map((genre) => genre.trim()),
+                };
+
+                const response = await fetch(`/admin/movies/${movie.id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(updatedMovie),
+                });
+
+                if (response.ok) {
+                    alert("Movie updated successfully!");
+                    location.reload
+                } else {
+                    alert("Error updating movie.");
+                }
+            });
+
+            // Cancel edit
+            document.getElementById("cancel-edit").addEventListener("click", () => {
+                location.reload(); // Reload the page to return to the table view
+            });
+        };
+
+        // Handle Add Movie button
+        document.getElementById("add-movie-button").addEventListener("click", () => {
+            showAddForm();
+        });
+
+        // Show the add form
+        const showAddForm = () => {
+            const content = document.querySelector(".content");
+            content.innerHTML = `
+            <div class="content">
+                <h1>Add New Movie</h1>
+                <div class="container-admin">
+                    <form id="add-movie-form" class="form-container-movie-manager">
+                        <div class="form-group-movie-manager">
+                            <label for="name-vn">Name (VN):</label>
+                            <input type="text" id="name-vn" required>
+                        </div>
+                        <div class="form-group-movie-manager">
+                            <label for="name-en">Name (EN):</label>
+                            <input type="text" id="name-en" required>
+                        </div>
+                        <div class="form-group-movie-manager">
+                            <label for="director">Director:</label>
+                            <input type="text" id="director" required>
+                        </div>
+                        <div class="form-group-movie-manager">
+                            <label for="actor">Actor:</label>
+                            <input type="text" id="actor" required>
+                        </div>
+                        <div class="form-group-movie-manager">
+                            <label for="release-date">Release Date:</label>
+                            <input type="date" id="release-date" required>
+                        </div>
+                        <div class="form-group-movie-manager">
+                            <label for="price">Price:</label>
+                            <input type="number" id="price" required>
+                        </div>
+                        <div class="form-group-movie-manager">
+                            <label for="genre">Genre:</label>
+                            <input type="text" id="genre" required>
+                        </div>
+                        <div class="form-group-movie-manager">
+                            <label for="movie-image">Image:</label>
+                            <input type="file" id="movie-image" accept="image/*" required>
+                        </div>
+                        <div class="form-action-movie-manager">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="button" class="btn btn-secondary" id="cancel-add">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            `;
+
+            // Handle form submission for adding movie
+            document.getElementById("add-movie-form").addEventListener("submit", async (event) => {
+                event.preventDefault();
+
+                const newMovie = {
+                    name_vn: document.getElementById("name-vn").value,
+                    name_en: document.getElementById("name-en").value,
+                    director: document.getElementById("director").value,
+                    actor: document.getElementById("actor").value,
+                    release_date: new Date(document.getElementById("release-date").value),
+                    price: document.getElementById("price").value,
+                    type_name_en: document.getElementById("genre").value.split(',').map((genre) => genre.trim()),
+                };
+
+                const response = await fetch(`/admin/movies`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(newMovie),
+                });
+
+                if (response.ok) {
+                    alert("Movie added successfully!");
+                    location.reload(); // Reload the page to return to the table view
+                } else {
+                    alert("Error adding movie.");
+                }
+            });
+
+            // Cancel adding movie
+            document.getElementById("cancel-add").addEventListener("click", () => {
+                location.reload(); // Reload the page to return to the table view
+            });
+        };
 
         // Initial load (fetch all movies)
         fetchmovies();

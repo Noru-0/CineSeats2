@@ -1,5 +1,6 @@
 const { User } = require("../account/account.model");
 const Movie = require("../movies/movies.model");
+const mongoose = require("mongoose");
 
 // Render Pages
 // Render trang quản lý tài khoản
@@ -188,7 +189,11 @@ const getFilteredAndSortedMovies = async (req, res) => {
 // Create a new movie
 const createMovie = async (req, res) => {
     try {
-        const newMovie = new Movie(req.body);
+        const newMovie = new Movie({
+            ...req.body,
+            _id: new mongoose.Types.ObjectId(),
+            id: new mongoose.Types.ObjectId().toString(),
+        });
         await newMovie.save();
         res.status(201).json({ message: 'Movie created successfully.', movie: newMovie });
     } catch (error) {
@@ -197,16 +202,35 @@ const createMovie = async (req, res) => {
     }
 };
 
+// Get a movie by ID
+const getMovieById = async (req, res) => {
+    try {
+        const movieId = req.params.id; // Lấy giá trị `id` từ request params
+        // Tìm kiếm bằng trường `id`
+        const movie = await Movie.findOne({ id: movieId });
+        if (!movie) {
+            return res.status(404).send({ message: "Movie not found" });
+        }
+
+        res.json(movie); // Trả về kết quả
+    } catch (error) {
+        console.error(error); // Ghi log lỗi
+        res.status(500).send({ message: "Error fetching movie details" });
+    }
+};
+
 // Update a movie
 const updateMovie = async (req, res) => {
     try {
         const { id } = req.params;
-        const updatedMovie = await Movie.findByIdAndUpdate(id, req.body, { new: true });
-        if (!updatedMovie) return res.status(404).json({ error: 'Movie not found.' });
-        res.status(200).json({ message: 'Movie updated successfully.', movie: updatedMovie });
+        const updatedMovie = await Movie.findOneAndUpdate({ id: id }, req.body, { new: true }); // Sử dụng id thay vì _id
+        if (!updatedMovie) {
+            return res.status(404).json({ message: "Movie not found" });
+        }
+        res.status(200).json({ message: "Movie updated successfully.", movie: updatedMovie });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Error updating movie.' });
+        console.error("Error updating movie:", error);
+        res.status(500).json({ error: "Error updating movie." });
     }
 };
 
@@ -214,7 +238,7 @@ const updateMovie = async (req, res) => {
 const deleteMovie = async (req, res) => {
     try {
         const { id } = req.params;
-        const deletedMovie = await Movie.findByIdAndDelete(id);
+        const deletedMovie = await Movie.findOneAndDelete({ id: id }); // Sử dụng id thay vì _id
         if (!deletedMovie) return res.status(404).json({ error: 'Movie not found.' });
         res.status(200).json({ message: 'Movie deleted successfully.' });
     } catch (error) {
@@ -236,6 +260,7 @@ module.exports = {
     getFilteredAndSortedUsers,
     //movie
     createMovie,
+    getMovieById,
     updateMovie,
     deleteMovie,
     getFilteredAndSortedMovies
