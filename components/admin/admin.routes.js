@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { renderAccount, renderDashBoard, renderTheater, renderMovie, deleteUser, blockUser, unblockUser, getFilteredAndSortedUsers, createMovie, updateMovie, deleteMovie, getFilteredAndSortedMovies } = require("./admin.controllers");
+const { renderAccount, renderDashBoard, renderTheater, renderMovie, deleteUser, blockUser, unblockUser, getFilteredAndSortedUsers, createMovie, getMovieById, updateMovie, deleteMovie, getFilteredAndSortedMovies } = require("./admin.controllers");
 
 // Routes for rendering pages
 router.get("/dashboard", renderDashBoard);
@@ -15,9 +15,11 @@ router.patch('/users/:id/unblock', unblockUser);
 router.get('/users', getFilteredAndSortedUsers);
 
 // API support movie management
+router.get('/movies', getFilteredAndSortedMovies);
 router.post('/movies', createMovie);
+router.get('/movies/:id', getMovieById);
 router.put('/movies/:id', updateMovie);
 router.delete('/movies/:id', deleteMovie);
-router.get('/movies', getFilteredAndSortedMovies);
+
 
 module.exports = router;
