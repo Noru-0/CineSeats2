@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const sendEmail = require('../../utility/sendEmail');
+const passwordStrength = require('../../utility/checkInput').passwordStrength;
 
 passport.use(new LocalStrategy(async (username, password, done) => {
     try {
@@ -75,3 +76,7 @@ async function registerHandler(username, email, password, re_password, res, req)
         renderAlert('Register failed', 'danger');
     }
 }
+
+module.exports = {
+    registerHandler,
+};

@@ -86,9 +86,12 @@
                 // }
             </script>
             {{#if isAuthenticated}}
-            <a href="/logout">
-                <button class="nav-button" type="submit">Log Out</button>
+            <a href="/account/general">
+                <button class="nav-button" type="button">Profile</button>
             </a>
+            {{!-- <a href="/logout">
+                <button class="nav-button" type="submit">Log Out</button>
+            </a> --}}
             {{else}}
             <a href="/login">
                 <button class="nav-button" type="submit">Sign In</button>

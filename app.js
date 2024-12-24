@@ -15,13 +15,14 @@ const profileRouter = require("./components/profile/profile.routes");
 const apiRouter = require("./components/api/api.routes");
 const adminRouter = require('./components/admin/admin.routes');
 const accountRouter = require('./components/account/account.routes');
-const { insertRandomData } = require('./components/account/account.model');
 
 const app = express();
 const PORT = 3000;
 
 // Serve static files
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/uploads", express.static(path.join(__dirname, "public", "images", "uploads")));
+
 
 // Handle register and login form data
 app.use(express.json());
@@ -95,7 +96,6 @@ app.get("/contact", (req, res) => {
 
 app.use('/admin', adminRouter);
 app.use('/account', accountRouter);
-// insertRandomData(10);
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

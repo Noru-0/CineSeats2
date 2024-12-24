@@ -24,3 +24,5 @@ router.post("/check-availability", authController.checkAvailability);
 
 // route to verify email
 router.get("/verify", authController.verifyEmail);
+
+module.exports = router;

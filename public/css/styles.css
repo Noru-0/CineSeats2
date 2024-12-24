@@ -1160,6 +1160,10 @@ ul {
 }
 
 /* account */
+.bg-sidebar2 {
+  background-color: #1a2b4c;
+}
+
 .nav-pills .nav-link {
   background-color: #6c757d; /* Màu xám */
   color: white;
