@@ -26,10 +26,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: 'user'
     },
-    status: {
-        type: String,
-        default: 'active'
-    }
+    isActive: {
+        type: Boolean,
+        default: true
+    },
 });
 
 const User = userDBConnection.model('User', userSchema);
