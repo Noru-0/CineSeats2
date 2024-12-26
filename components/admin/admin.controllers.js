@@ -6,6 +6,9 @@ const { cloudinary } = require('../cloudinary/config/cloud'); // Import config c
 // Render Pages
 // Render trang quản lý tài khoản
 const renderAccount = async (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).send("Access denied.");
+  }
   try {
     const users = await User.find(); // Lấy tất cả người dùng
     const filteredUsers = users.map(user => ({
@@ -25,6 +28,9 @@ const renderAccount = async (req, res) => {
 
 // Render trang dashboard
 const renderDashBoard = async (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).send("Access denied.");
+  }
   try {
     res.render("admin/dashboard");
   } catch (error) {
@@ -35,6 +41,9 @@ const renderDashBoard = async (req, res) => {
 
 // Render trang movie
 const renderMovie = async (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).send("Access denied.");
+  }
   try {
     // Lấy tất cả phim
     const movies = await Movie.find();
@@ -57,68 +66,36 @@ const renderMovie = async (req, res) => {
 
 
 // Users management
-// Xóa người dùng
-const deleteUser = async (req, res) => {
-  try {
-    const userId = req.params.id; // Get the UUID from the request parameters
-
-    // Delete the user by the "id" field
-    const result = await User.deleteOne({ id: userId });
-
-    if (result.deletedCount === 0) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    res.status(200).json({ message: 'User deleted successfully' });
-  } catch (error) {
-    console.error("Error deleting user:", error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-};
-
-// Cấm người dùng
+// Block user
 const blockUser = async (req, res) => {
   try {
-    const userId = req.params.id; // Get the UUID from the request parameters
-
-    // Find the user by the "id" field
-    const user = await User.findOne({ id: userId });
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    // Update the user's status to "blocked"
-    user.status = 'blocked';
-    await user.save();
-
+    const userId = req.params.id;
+    await User.findByIdAndUpdate(userId, { isActive: false });
     res.status(200).json({ message: 'User blocked successfully' });
   } catch (error) {
-    console.error("Error blocking user:", error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Error blocking user' });
   }
 };
 
-// Mở cấm người dùng
+// Unblock user
 const unblockUser = async (req, res) => {
   try {
-    const userId = req.params.id; // Get the UUID from the request parameters
-
-    // Find the user by the "id" field
-    const user = await User.findOne({ id: userId });
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    // Update the user's status to "active"
-    user.status = 'active';
-    await user.save();
-
+    const userId = req.params.id;
+    await User.findByIdAndUpdate(userId, { isActive: true });
     res.status(200).json({ message: 'User unblocked successfully' });
   } catch (error) {
-    console.error("Error unblocking user:", error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Error unblocking user' });
+  }
+};
+
+// Delete user
+const deleteUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    await User.findByIdAndDelete(userId);
+    res.status(200).json({ message: 'User deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting user' });
   }
 };
 

@@ -12,28 +12,24 @@ const userSchema = new schema({
         type: String,
         default: 'user'
     },
-    isActive: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: true },
     activationToken: { type: String },
     activationExpires: { type: Date }, // Expiry time
-    status: {
-        type: String,
-        default: 'active'
-    },
-    accumulated_points: { type: Number, default: 0 },
-    level: { type: String, default: '' },
-    notifications: { type: Array, default: [] },
-    history: { type: Array, default: [] },
-    vouchers: { type: Array, default: [] },
+    // accumulated_points: { type: Number, default: 0 },
+    // level: { type: String, default: '' },
+    // notifications: { type: Array, default: [] },
+    // history: { type: Array, default: [] },
+    // vouchers: { type: Array, default: [] },
 
-    // Profile
-    firstName: { type: String, default: '' },
-    lastName: { type: String, default: '' },
-    phone: { type: String, default: '' },
-    birthday: { type: Date, default: Date.now },
-    country: { type: String, default: '' },
-    address: { type: String, default: '' },
-    theater: { type: String, default: '' },
-    avatar_url: { type: String, default: '' },
+    // // Profile
+    // firstName: { type: String, default: '' },
+    // lastName: { type: String, default: '' },
+    // phone: { type: String, default: '' },
+    // birthday: { type: Date, default: Date.now },
+    // country: { type: String, default: '' },
+    // address: { type: String, default: '' },
+    // theater: { type: String, default: '' },
+    // avatar_url: { type: String, default: '' },
 });
 userSchema.methods.getVerificationToken = function () {
     const token = crypto.randomBytes(32).toString('hex');

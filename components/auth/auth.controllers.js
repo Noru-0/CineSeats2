@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const { isValidEmail, passwordStrength } = require('../../utility/checkInput');
 const sendEmail = require("../../utility/sendEmail");
 const bcrypt = require("bcryptjs");
+
 const renderLogin = (req, res) => {
     if (req.isAuthenticated()) {
         return res.redirect("/");
@@ -13,8 +14,22 @@ const renderLogin = (req, res) => {
 };
 // Login controller
 const login = (req, res, next) => {
-    passport.authenticate('local', {
-        successRedirect: '/', failureRedirect: '/login'
+    passport.authenticate('local', (err, user, info) => {
+        if (err) {
+            return next(err);
+        }
+        if (!user) {
+            return res.redirect('/login');
+        }
+        req.logIn(user, (err) => {
+            if (err) {
+                return next(err);
+            }
+            if (user.role === 'admin') {
+                return res.redirect('/admin/dashboard');
+            }
+            return res.redirect('/');
+        });
     })(req, res, next);
 };
 
