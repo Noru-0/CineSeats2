@@ -229,8 +229,8 @@
                             <input type="date" id="release-date" value="${new Date(movie.release_date).toISOString().split('T')[0]}">
                         </div>
                         <div class="form-group-movie-manager">
-                            <label for="price">Price:</label>
-                            <input type="number" id="price" value="${movie.price}">
+                            <label for="country">Country:</label>
+                            <input type="text" id="country" value="${movie.country_name_en}">
                         </div>
                         <div class="form-group-movie-manager">
                             <label for="genre">Genre:</label>
@@ -262,7 +262,7 @@
                         director: document.getElementById("director").value,
                         actor: document.getElementById("actor").value,
                         release_date: new Date(document.getElementById("release-date").value),
-                        price: document.getElementById("price").value,
+                        country_name_en: document.getElementById("country").value,
                         genre: document.getElementById("genre").value.split(',').map(genre => genre.trim()),
                     };
 
@@ -272,7 +272,7 @@
                     formData.append("director", updatedMovie.director);
                     formData.append("actor", updatedMovie.actor);
                     formData.append("release_date", updatedMovie.release_date);
-                    formData.append("price", updatedMovie.price);
+                    formData.append("country_name_en", updatedMovie.country_name_en);
                     formData.append("genre", updatedMovie.genre);
 
                     const fileInput = document.getElementById("movie-image");
@@ -336,8 +336,8 @@
                             <input type="date" id="release-date" required>
                         </div>
                         <div class="form-group-movie-manager">
-                            <label for="price">Price:</label>
-                            <input type="number" id="price" required>
+                            <label for="country">Country:</label>
+                            <input type="text" id="country" required>
                         </div>
                         <div class="form-group-movie-manager">
                             <label for="genre">Genre:</label>
@@ -366,7 +366,7 @@
                 formData.append("director", document.getElementById("director").value);
                 formData.append("actor", document.getElementById("actor").value);
                 formData.append("release_date", document.getElementById("release-date").value);
-                formData.append("price", document.getElementById("price").value);
+                formData.append("country_name_en", document.getElementById("country").value);
                 formData.append("genre", document.getElementById("genre").value);
                 formData.append("movieImage", document.getElementById("movie-image").files[0]); // Lấy file ảnh
 
