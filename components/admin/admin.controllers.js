@@ -180,21 +180,42 @@ const getFilteredAndSortedMovies = async (req, res) => {
 // Create a new movie
 const createMovie = async (req, res) => {
   try {
-    const { name_vn, name_en, director, actor, release_date, price, genre } = req.body;
+    const { name_vn, name_en, director, actor, release_date, country_name_en, genre } = req.body;
 
-    // Tạo đối tượng movie mới với dữ liệu từ body và link ảnh từ Cloudinary
-    const newMovie = new Movie({
+    // Prepare data for the new movie
+    const movieData = {
+      _id: new mongoose.Types.ObjectId(), // Generate a new ObjectId
+      id: new mongoose.Types.ObjectId().toHexString(), // Generate a new UUID
       name_vn,
       name_en,
       director,
       actor,
       release_date,
-      price,
-      type_name_vn: genre ? genre.split(',').map(g => g.trim()) : [], // Chuyển genre thành mảng
-      image: req.file.path, // Link ảnh từ Cloudinary
-    });
+      country_name_en,
+      type_name_en: genre ? genre.split(',').map(g => g.trim()) : [], // Handle genres as an array
+    };
 
-    // Lưu movie vào database
+    // Check if there's a file (movieImage) being uploaded
+    if (req.file) {
+      try {
+        // Upload the image to Cloudinary
+        const cloudinaryResponse = await cloudinary.uploader.upload(req.file.path, {
+          folder: 'movie_poster', // Specify the folder name on Cloudinary
+          allowed_formats: ['jpeg', 'png', 'jpg', 'gif'],
+        });
+
+        // Add the Cloudinary image URL to the movieData
+        movieData.image = cloudinaryResponse.secure_url;
+      } catch (uploadError) {
+        console.error('Error uploading image to Cloudinary:', uploadError);
+        return res.status(500).json({ message: 'Error uploading image to Cloudinary.' });
+      }
+    }
+
+    // Create a new movie with the prepared data
+    const newMovie = new Movie(movieData);
+
+    // Save the new movie to the database
     await newMovie.save();
     res.status(201).json({ message: 'Movie added successfully!', movie: newMovie });
   } catch (error) {
@@ -224,7 +245,7 @@ const getMovieById = async (req, res) => {
 const updateMovie = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name_vn, name_en, director, actor, release_date, price, genre } = req.body;
+    const { name_vn, name_en, director, actor, release_date, country_name_en, genre } = req.body;
 
     // Validate if the ID is a valid string
     if (!id) {
@@ -238,7 +259,7 @@ const updateMovie = async (req, res) => {
       director,
       actor,
       release_date,
-      price,
+      country_name_en,
       type_name_en: genre ? genre.split(',').map(g => g.trim()) : [], // Handle genres as an array
     };
 
