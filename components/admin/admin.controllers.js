@@ -1,6 +1,7 @@
 const { User } = require("../account/account.model");
 const Movie = require("../movies/movies.model");
 const mongoose = require("mongoose");
+const { cloudinary } = require('../cloudinary/config/cloud'); // Import config của Cloudinary
 
 // Render Pages
 // Render trang quản lý tài khoản
@@ -179,16 +180,26 @@ const getFilteredAndSortedMovies = async (req, res) => {
 // Create a new movie
 const createMovie = async (req, res) => {
   try {
+    const { name_vn, name_en, director, actor, release_date, price, genre } = req.body;
+
+    // Tạo đối tượng movie mới với dữ liệu từ body và link ảnh từ Cloudinary
     const newMovie = new Movie({
-      ...req.body,
-      _id: new mongoose.Types.ObjectId(),
-      id: new mongoose.Types.ObjectId().toString(),
+      name_vn,
+      name_en,
+      director,
+      actor,
+      release_date,
+      price,
+      type_name_vn: genre ? genre.split(',').map(g => g.trim()) : [], // Chuyển genre thành mảng
+      image: req.file.path, // Link ảnh từ Cloudinary
     });
+
+    // Lưu movie vào database
     await newMovie.save();
-    res.status(201).json({ message: 'Movie created successfully.', movie: newMovie });
+    res.status(201).json({ message: 'Movie added successfully!', movie: newMovie });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Error creating movie.' });
+    res.status(500).json({ message: 'Error adding movie.' });
   }
 };
 
@@ -213,14 +224,52 @@ const getMovieById = async (req, res) => {
 const updateMovie = async (req, res) => {
   try {
     const { id } = req.params;
-    const updatedMovie = await Movie.findOneAndUpdate({ id: id }, req.body, { new: true }); // Sử dụng id thay vì _id
-    if (!updatedMovie) {
-      return res.status(404).json({ message: "Movie not found" });
+    const { name_vn, name_en, director, actor, release_date, price, genre } = req.body;
+
+    // Validate if the ID is a valid string
+    if (!id) {
+      return res.status(400).json({ message: 'Invalid movie ID.' });
     }
-    res.status(200).json({ message: "Movie updated successfully.", movie: updatedMovie });
+
+    // Prepare data to update (excluding image part)
+    const movieData = {
+      name_vn,
+      name_en,
+      director,
+      actor,
+      release_date,
+      price,
+      type_name_en: genre ? genre.split(',').map(g => g.trim()) : [], // Handle genres as an array
+    };
+
+    // Check if there's a file (movieImage) being uploaded
+    if (req.file) {
+      try {
+        // Upload the image to Cloudinary
+        const cloudinaryResponse = await cloudinary.uploader.upload(req.file.path, {
+          folder: 'movie_poster', // Specify the folder name on Cloudinary
+          allowed_formats: ['jpeg', 'png', 'jpg', 'gif'],
+        });
+
+        // Add the Cloudinary image URL to the movieData
+        movieData.image = cloudinaryResponse.secure_url;
+      } catch (uploadError) {
+        console.error('Error uploading image to Cloudinary:', uploadError);
+        return res.status(500).json({ message: 'Error uploading image to Cloudinary.' });
+      }
+    }
+
+    // Update the movie in the database
+    const updatedMovie = await Movie.findOneAndUpdate({ id: id }, movieData, { new: true });
+
+    if (!updatedMovie) {
+      return res.status(404).json({ message: 'Movie not found.' });
+    }
+
+    res.status(200).json({ message: 'Movie updated successfully!', movie: updatedMovie });
   } catch (error) {
-    console.error("Error updating movie:", error);
-    res.status(500).json({ error: "Error updating movie." });
+    console.error(error);
+    res.status(500).json({ message: 'Error updating movie.' });
   }
 };
 

@@ -3,11 +3,32 @@ const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
-cloudinary.config({
-    cloud_name: 'djupm4v0l',
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
+// Cấu hình Cloudinary
+try {
+    cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dvnr2fqlk',
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
+    console.log('✅ Connected to Cloudinary successfully.');
+} catch (error) {
+    console.error('❌ Failed to connect to Cloudinary:', error.message);
+}
+
+// Multer storage configuration for Cloudinary
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'movie_poster', // Folder name on Cloudinary
+        allowed_formats: ['jpeg', 'png', 'jpg', 'gif'], // Allow specific formats
+    },
 });
+
+const upload = multer({ storage: storage });
+
+module.exports = { cloudinary, upload };
+
+
 // GET LINK
 // const url = cloudinary.url('mity_nigfdk')
 // console.log(url);
@@ -34,16 +55,3 @@ cloudinary.config({
 //     })
 //     console.log(url);
 // })();
-
-// Multer storage configuration for Cloudinary
-const storage = new CloudinaryStorage({
-    cloudinary: cloudinary,
-    params: {
-        folder: 'user_profiles', // Folder name on Cloudinary
-        allowed_formats: ['jpeg', 'png', 'jpg', 'gif'], // Allow specific formats
-    },
-});
-
-const upload = multer({ storage: storage });
-
-module.exports = cloudinary;

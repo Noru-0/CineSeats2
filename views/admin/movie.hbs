@@ -238,7 +238,7 @@
                         </div>
                          <div class="form-group-movie-manager">
                             <label for="movie-image">Image:</label>
-                            <input type="file" id="movie-image" accept="image/*">
+                            <input type="file" name="movieImage" id="movie-image" accept="image/*">
                             <!-- You can optionally display the current image here if it exists -->
                             ${movie.image ? `<img src="${movie.image}" alt="Current Image" width="100" height="100">` : ''}
                         </div>
@@ -255,28 +255,45 @@
             document.getElementById("edit-movie-form").addEventListener("submit", async (event) => {
                 event.preventDefault();
 
-                const updatedMovie = {
-                    name_vn: document.getElementById("name-vn").value,
-                    name_en: document.getElementById("name-en").value,
-                    director: document.getElementById("director").value,
-                    actor: document.getElementById("actor").value,
-                    release_date: new Date(document.getElementById("release-date").value),
-                    price: document.getElementById("price").value,
-                    type_name_en: document.getElementById("genre").value.split(',').map((genre) => genre.trim()),
+                const updateMovie = async (id) => {
+                    const updatedMovie = {
+                        name_vn: document.getElementById("name-vn").value,
+                        name_en: document.getElementById("name-en").value,
+                        director: document.getElementById("director").value,
+                        actor: document.getElementById("actor").value,
+                        release_date: new Date(document.getElementById("release-date").value),
+                        price: document.getElementById("price").value,
+                        genre: document.getElementById("genre").value.split(',').map(genre => genre.trim()),
+                    };
+
+                    const formData = new FormData();
+                    formData.append("name_vn", updatedMovie.name_vn);
+                    formData.append("name_en", updatedMovie.name_en);
+                    formData.append("director", updatedMovie.director);
+                    formData.append("actor", updatedMovie.actor);
+                    formData.append("release_date", updatedMovie.release_date);
+                    formData.append("price", updatedMovie.price);
+                    formData.append("genre", updatedMovie.genre);
+
+                    const fileInput = document.getElementById("movie-image");
+                    if (fileInput.files.length > 0) {
+                        formData.append("movieImage", fileInput.files[0]);
+                    }
+
+                    const response = await fetch(`/admin/movies/${movie.id}`, {
+                        method: "PUT",
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        alert("Movie updated successfully!");
+                        location.reload();
+                    } else {
+                        alert("Error updating movie.");
+                    }
                 };
 
-                const response = await fetch(`/admin/movies/${movie.id}`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(updatedMovie),
-                });
-
-                if (response.ok) {
-                    alert("Movie updated successfully!");
-                    location.reload
-                } else {
-                    alert("Error updating movie.");
-                }
+                updateMovie(movie.id);
             });
 
             // Cancel edit
@@ -328,7 +345,7 @@
                         </div>
                         <div class="form-group-movie-manager">
                             <label for="movie-image">Image:</label>
-                            <input type="file" id="movie-image" accept="image/*" required>
+                            <input type="file" name="movieImage" id="movie-image" accept="image/*" required>
                         </div>
                         <div class="form-action-movie-manager">
                             <button type="submit" class="btn btn-primary">Save</button>
@@ -343,27 +360,32 @@
             document.getElementById("add-movie-form").addEventListener("submit", async (event) => {
                 event.preventDefault();
 
-                const newMovie = {
-                    name_vn: document.getElementById("name-vn").value,
-                    name_en: document.getElementById("name-en").value,
-                    director: document.getElementById("director").value,
-                    actor: document.getElementById("actor").value,
-                    release_date: new Date(document.getElementById("release-date").value),
-                    price: document.getElementById("price").value,
-                    type_name_en: document.getElementById("genre").value.split(',').map((genre) => genre.trim()),
-                };
+                const formData = new FormData();
+                formData.append("name_vn", document.getElementById("name-vn").value);
+                formData.append("name_en", document.getElementById("name-en").value);
+                formData.append("director", document.getElementById("director").value);
+                formData.append("actor", document.getElementById("actor").value);
+                formData.append("release_date", document.getElementById("release-date").value);
+                formData.append("price", document.getElementById("price").value);
+                formData.append("genre", document.getElementById("genre").value);
+                formData.append("movieImage", document.getElementById("movie-image").files[0]); // Lấy file ảnh
 
-                const response = await fetch(`/admin/movies`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(newMovie),
-                });
+                try {
+                    const response = await fetch('/admin/movies', {
+                        method: 'POST',
+                        body: formData,
+                    });
 
-                if (response.ok) {
-                    alert("Movie added successfully!");
-                    location.reload(); // Reload the page to return to the table view
-                } else {
-                    alert("Error adding movie.");
+                    if (response.ok) {
+                        alert('Movie added successfully!');
+                        location.reload(); // Reload để hiển thị bảng mới
+                    } else {
+                        const error = await response.json();
+                        alert(error.message || 'Error adding movie.');
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert('Error connecting to the server.');
                 }
             });
 
